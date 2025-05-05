@@ -154,3 +154,9 @@ func (l *LinkedList) FindValue(val any) (*Node, error) {
 
 	return &Node{}, errors.New("Value not found.")
 }
+
+func (l *LinkedList) Clear() {
+	l.head = nil
+	l.tail = nil
+	l.len = 0
+}
