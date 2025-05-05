@@ -8,9 +8,8 @@ type Stack struct {
 }
 
 func New() *Stack {
-	newItems := []any{}
 	return &Stack{
-		items: newItems,
+		items: []any{},
 		len:   0,
 	}
 }
@@ -39,9 +38,13 @@ func (s *Stack) Peek() (any, error) {
 		return nil, errors.New("stack is empty")
 	}
 
-	return s.items[len(s.items)-1], nil
+	return s.items[s.len-1], nil
 }
 
 func (s *Stack) IsEmpty() bool {
-	return len(s.items) <= 0
+	return s.len <= 0
+}
+
+func (s *Stack) Size() int {
+	return s.len
 }
