@@ -59,9 +59,8 @@ func (l *LinkedList) Append(val any) {
 }
 
 func (l *LinkedList) AppendToIndex(val any, index int) error {
-
 	if index > l.len {
-		return errors.New("index out of bounds.")
+		return errors.New("Index out of bounds.")
 	}
 
 	node := NewNode(val)
@@ -92,9 +91,13 @@ func (l *LinkedList) AppendToIndex(val any, index int) error {
 	return nil
 }
 
+func (l *LinkedList) IsEmpty() bool {
+	return l.len <= 0
+}
+
 func (l *LinkedList) Get(index int) (*Node, error) {
 	if index >= l.len || index < 0 {
-		return nil, errors.New("index out of bounds.")
+		return nil, errors.New("Index out of bounds.")
 	}
 
 	lap := 0
@@ -106,4 +109,48 @@ func (l *LinkedList) Get(index int) (*Node, error) {
 	}
 
 	return current, nil
+}
+
+func (l *LinkedList) RemoveAtIndex(index int) (*Node, error) {
+	if index >= l.len {
+		return &Node{}, errors.New("Index out of bounds.")
+	}
+
+	current, err := l.Get(index)
+	if err != nil {
+		return &Node{}, err
+	}
+
+	if current.prev == nil {
+		l.head = current.next
+		l.len--
+		return current, nil
+	}
+
+	if current.next == nil {
+		l.tail = current.prev
+		l.len--
+		return current, nil
+	}
+
+	current.prev.next = current.next
+	l.len--
+	return current, nil
+}
+
+func (l *LinkedList) FindValue(val any) (*Node, error) {
+	if l.IsEmpty() {
+		return &Node{}, errors.New("List is empty.")
+	}
+
+	current := l.head
+	for current != nil {
+		if current.val == val {
+			return current, nil
+		}
+
+		current = current.next
+	}
+
+	return &Node{}, errors.New("Value not found.")
 }
