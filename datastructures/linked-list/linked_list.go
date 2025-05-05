@@ -1,6 +1,9 @@
 package list
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type LinkedList struct {
 	len  int
@@ -63,17 +66,17 @@ func (l *LinkedList) AppendToIndex(val any, index int) error {
 		return errors.New("Index out of bounds.")
 	}
 
-	node := NewNode(val)
-
 	if index == 0 || l.len == 0 {
-		l.Prepend(node)
+		l.Prepend(val)
 		return nil
 	}
 
 	if index == l.len-1 {
-		l.Append(node)
+		l.Append(val)
 		return nil
 	}
+
+	node := NewNode(val)
 
 	current, err := l.Get(index)
 	if err != nil {
@@ -138,25 +141,38 @@ func (l *LinkedList) RemoveAtIndex(index int) (*Node, error) {
 	return current, nil
 }
 
-func (l *LinkedList) FindValue(val any) (*Node, error) {
+func (l *LinkedList) Find(val any) (int, error) {
 	if l.IsEmpty() {
-		return &Node{}, errors.New("List is empty.")
+		return 0, errors.New("List is empty.")
 	}
 
+	index := 0
 	current := l.head
 	for current != nil {
 		if current.val == val {
-			return current, nil
+			return index, nil
 		}
 
 		current = current.next
+		index++
 	}
 
-	return &Node{}, errors.New("Value not found.")
+	return 0, errors.New("Value not found.")
 }
 
 func (l *LinkedList) Clear() {
 	l.head = nil
 	l.tail = nil
 	l.len = 0
+}
+
+func (l *LinkedList) String() string {
+	result := ""
+	current := l.head
+	for current != nil {
+		result += fmt.Sprintf("%v <-> ", current.val)
+		current = current.next
+	}
+	result += "nil"
+	return result
 }
