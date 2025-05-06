@@ -29,6 +29,10 @@ func NewNode(val any) *Node {
 	}
 }
 
+func (l *LinkedList) Len() int {
+	return l.len
+}
+
 func (l *LinkedList) Prepend(val any) {
 	node := NewNode(val)
 
