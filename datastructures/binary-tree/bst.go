@@ -28,6 +28,17 @@ func NewBTree() *BTree {
 	}
 }
 
+func NewBTreeFromArray(array []int) *BTree {
+
+	bst := &BTree{}
+
+	for _, v := range array {
+		bst.Insert(v)
+	}
+
+	return bst
+}
+
 func stringify(n *Node, level int) {
 	if n != nil {
 		format := ""
@@ -80,6 +91,17 @@ func (t *BTree) Insert(val int) error {
 			}
 		}
 	}
+}
+
+
+func (t *BTree) InsertMany(many ...int) error {
+	for _, v := range many {
+		if err := t.Insert(v); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (t *BTree) Min() *Node {
