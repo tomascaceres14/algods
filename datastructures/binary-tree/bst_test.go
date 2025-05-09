@@ -4,6 +4,20 @@ import (
 	"testing"
 )
 
+func equalSlices(arr1 []int, arr2 []int) bool {
+	if len(arr1) != len(arr2) {
+		return false
+	}
+
+	for i, v := range arr1 {
+		if v != arr2[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
 func TestInsertNode(t *testing.T) {
 	tree := NewBTree()
 
@@ -20,13 +34,7 @@ func TestInsertNode(t *testing.T) {
 
 	inOrder := tree.InOrder()
 
-	if len(inOrder) != len(sortedNums) {
-		t.Error("InOrder() length doesn't match test slice")
-	}
-
-	for i, v := range inOrder {
-		if v != sortedNums[i] {
-			t.Error("Items doesnt match", v, sortedNums[i])
-		}
+	if !equalSlices(inOrder, sortedNums) {
+		t.Errorf("InOrder() bad order, got %v and expected %v", inOrder, sortedNums)
 	}
 }
