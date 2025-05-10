@@ -11,10 +11,9 @@ func TestLinkedListBasicOps(t *testing.T) {
 		t.Error("Expected list to be empty")
 	}
 
-	// Append and Prepend
 	l.Append("a")
 	l.Append("b")
-	l.Prepend("c") // list: c <-> a <-> b
+	l.Prepend("c")
 
 	if l.Len() != 3 {
 		t.Errorf("Expected length 3, got %d", l.Len())
@@ -24,7 +23,6 @@ func TestLinkedListBasicOps(t *testing.T) {
 		t.Error("Head or tail values are incorrect after appends and prepends")
 	}
 
-	// String output
 	expected := "c <-> a <-> b <-> nil"
 	if l.String() != expected {
 		t.Errorf("Expected string %q, got %q", expected, l.String())
@@ -51,7 +49,7 @@ func TestAppendToIndex(t *testing.T) {
 	l.Append("1")
 	l.Append("2")
 	l.Append("4")
-	err := l.AppendToIndex("3", 2) // insert at index 2
+	err := l.AppendToIndex("3", 2)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}

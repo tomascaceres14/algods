@@ -23,18 +23,14 @@ func NewList() *LinkedList {
 	}
 }
 
-func NewNode(val any) *Node {
-	return &Node{
-		Val: val,
-	}
-}
-
 func (l *LinkedList) Len() int {
 	return l.len
 }
 
 func (l *LinkedList) Prepend(val any) {
-	node := NewNode(val)
+	node := &Node{
+		Val: val,
+	}
 
 	if l.len <= 0 {
 		l.head = node
@@ -50,7 +46,9 @@ func (l *LinkedList) Prepend(val any) {
 }
 
 func (l *LinkedList) Append(val any) {
-	node := NewNode(val)
+	node := &Node{
+		Val: val,
+	}
 
 	if l.len <= 0 {
 		l.head = node
@@ -75,17 +73,19 @@ func (l *LinkedList) AppendToIndex(val any, index int) error {
 		return nil
 	}
 
-	if index == l.len-1 {
+	if index == l.len {
 		l.Append(val)
 		return nil
 	}
 
-	node := NewNode(val)
+	node := &Node{
+		Val: val,
+	}
 
 	current := l.Get(index)
 
 	current.prev.next = node
-	node.prev = current.prev.next
+	node.prev = current.prev
 
 	current.prev = node
 	node.next = current
@@ -118,15 +118,24 @@ func (l *LinkedList) RemoveAtIndex(index int) (*Node, error) {
 	}
 
 	current := l.Get(index)
+	if current == nil {
+		return nil, errors.New("Index out of bounds.")
+	}
 
 	if current.prev == nil {
 		l.head = current.next
+		if l.head != nil {
+			l.head.prev = nil
+		}
 		l.len--
 		return current, nil
 	}
 
 	if current.next == nil {
 		l.tail = current.prev
+		if l.tail != nil {
+			l.tail.next = nil
+		}
 		l.len--
 		return current, nil
 	}
