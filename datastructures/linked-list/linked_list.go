@@ -12,7 +12,7 @@ type LinkedList struct {
 }
 
 type Node struct {
-	val  any
+	Val  any
 	prev *Node
 	next *Node
 }
@@ -25,7 +25,7 @@ func NewList() *LinkedList {
 
 func NewNode(val any) *Node {
 	return &Node{
-		val: val,
+		Val: val,
 	}
 }
 
@@ -82,10 +82,7 @@ func (l *LinkedList) AppendToIndex(val any, index int) error {
 
 	node := NewNode(val)
 
-	current, err := l.Get(index)
-	if err != nil {
-		return err
-	}
+	current := l.Get(index)
 
 	current.prev.next = node
 	node.prev = current.prev.next
@@ -102,20 +99,17 @@ func (l *LinkedList) IsEmpty() bool {
 	return l.len <= 0
 }
 
-func (l *LinkedList) Get(index int) (*Node, error) {
+func (l *LinkedList) Get(index int) *Node {
 	if index >= l.len || index < 0 {
-		return nil, errors.New("Index out of bounds.")
+		return nil
 	}
 
-	lap := 0
 	current := l.head
-
-	for index > lap {
+	for i := 0; i < index; i++ {
 		current = current.next
-		lap++
 	}
 
-	return current, nil
+	return current
 }
 
 func (l *LinkedList) RemoveAtIndex(index int) (*Node, error) {
@@ -123,10 +117,7 @@ func (l *LinkedList) RemoveAtIndex(index int) (*Node, error) {
 		return &Node{}, errors.New("Index out of bounds.")
 	}
 
-	current, err := l.Get(index)
-	if err != nil {
-		return &Node{}, err
-	}
+	current := l.Get(index)
 
 	if current.prev == nil {
 		l.head = current.next
@@ -145,23 +136,23 @@ func (l *LinkedList) RemoveAtIndex(index int) (*Node, error) {
 	return current, nil
 }
 
-func (l *LinkedList) Find(val any) (int, error) {
+func (l *LinkedList) Lsearch(val any) int {
 	if l.IsEmpty() {
-		return 0, errors.New("List is empty.")
+		return -1
 	}
 
 	index := 0
 	current := l.head
 	for current != nil {
-		if current.val == val {
-			return index, nil
+		if current.Val == val {
+			return index
 		}
 
 		current = current.next
 		index++
 	}
 
-	return 0, errors.New("Value not found.")
+	return -1
 }
 
 func (l *LinkedList) Clear() {
@@ -174,7 +165,7 @@ func (l *LinkedList) String() string {
 	result := ""
 	current := l.head
 	for current != nil {
-		result += fmt.Sprintf("%v <-> ", current.val)
+		result += fmt.Sprintf("%v <-> ", current.Val)
 		current = current.next
 	}
 	result += "nil"
