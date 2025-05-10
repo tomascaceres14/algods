@@ -39,20 +39,6 @@ func NewBTreeFromArray(array []int) *BTree {
 	return bst
 }
 
-func stringify(n *Node, level int) {
-	if n != nil {
-		format := ""
-		for i := 0; i < level; i++ {
-			format += "       "
-		}
-		format += "---[ "
-		level++
-		stringify(n.right, level)
-		fmt.Printf(format+"%d\n", n.Val)
-		stringify(n.left, level)
-	}
-}
-
 func (t *BTree) Len() int {
 	return t.size
 }
@@ -130,6 +116,20 @@ func inOrderHelper(n *Node, result *[]int) {
 	inOrderHelper(n.left, result)
 	*result = append(*result, n.Val)
 	inOrderHelper(n.right, result)
+}
+
+func stringify(n *Node, level int) {
+	if n != nil {
+		format := ""
+		for i := 0; i < level; i++ {
+			format += "       "
+		}
+		format += "---[ "
+		level++
+		stringify(n.right, level)
+		fmt.Printf(format+"%d\n", n.Val)
+		stringify(n.left, level)
+	}
 }
 
 func (bst *BTree) String() {
