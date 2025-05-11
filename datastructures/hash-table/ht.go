@@ -1,9 +1,11 @@
 package ht
 
-import list "github.com/tomascaceres14/algods/datastructures/linked-list"
+import (
+	list "github.com/tomascaceres14/algods/datastructures/linked-list"
+)
 
 type HashTable struct {
-	table        []*list.LinkedList
+	Table        []*list.LinkedList
 	size, bucket int
 }
 
@@ -19,10 +21,22 @@ func New(cap int) *HashTable {
 	}
 
 	return &HashTable{
-		table:  table,
+		Table:  table,
 		size:   0,
 		bucket: cap,
 	}
+}
+
+func findItemByKey(list *list.LinkedList, key string) (*item, bool) {
+	for i := 0; i < list.Len(); i++ {
+		node := list.Get(i)
+		item, ok := node.Val.(*item)
+		if ok && item.key == key {
+			return item, true
+		}
+	}
+
+	return nil, false
 }
 
 func (ht *HashTable) rollingHash(s string) int64 {
@@ -32,22 +46,40 @@ func (ht *HashTable) rollingHash(s string) int64 {
 	for i := 0; i < len(s); i++ {
 		hash = ((hash<<5 - hash) + int64(s[i])) % m
 	}
-	return hash
+	return hash % int64(ht.bucket)
 }
 
 func (ht *HashTable) Put(key string, value any) {
 	index := ht.rollingHash(key)
 
-	item := item{
-		key:   key,
-		value: value,
+	list := ht.Table[index]
+
+	exists, ok := findItemByKey(list, key)
+	if !ok {
+		list.Append(&item{
+			key:   key,
+			value: value,
+		})
+		return
 	}
 
-	list := ht.table[index]
+	exists.value = value
+	ht.size++
+}
 
-	if exists := list.Lsearch(item); exists == -1 {
-		list.Append(item)
-	} else {
-		list.Get(exists).Val = item
+func (ht *HashTable) Get(key string) any {
+	index := ht.rollingHash(key)
+
+	list := ht.Table[index]
+
+	if list.Len() == 0 {
+		return nil
 	}
+
+	item, ok := findItemByKey(list, key)
+	if !ok {
+		return nil
+	}
+
+	return item.value
 }

@@ -2,116 +2,106 @@ package list
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestLinkedListBasicOps(t *testing.T) {
-	l := NewList()
+func TestLinkedList_AppendAndPrepend(t *testing.T) {
+	ll := NewList()
 
-	if !l.IsEmpty() {
-		t.Error("Expected list to be empty")
-	}
+	ll.Append("A")
+	ll.Prepend("B")
+	ll.Append("C")
 
-	l.Append("a")
-	l.Append("b")
-	l.Prepend("c")
-
-	if l.Len() != 3 {
-		t.Errorf("Expected length 3, got %d", l.Len())
-	}
-
-	if l.head.Val != "c" || l.tail.Val != "b" {
-		t.Error("Head or tail values are incorrect after appends and prepends")
-	}
-
-	expected := "c <-> a <-> b <-> nil"
-	if l.String() != expected {
-		t.Errorf("Expected string %q, got %q", expected, l.String())
-	}
+	assert.Equal(t, 3, ll.Len())
+	assert.Equal(t, "B", ll.Get(0).Val)
+	assert.Equal(t, "A", ll.Get(1).Val)
+	assert.Equal(t, "C", ll.Get(2).Val)
 }
 
-func TestLinkedListGet(t *testing.T) {
-	l := NewList()
-	l.Append("x")
-	l.Append("y")
-	l.Append("z")
+func TestLinkedList_Get_OutOfBounds(t *testing.T) {
+	ll := NewList()
+	assert.Nil(t, ll.Get(-1))
+	assert.Nil(t, ll.Get(0))
 
-	if node := l.Get(1); node == nil || node.Val != "y" {
-		t.Error("Get(1) failed to retrieve correct node")
-	}
-
-	if node := l.Get(3); node != nil {
-		t.Error("Expected Get(3) to return nil (out of bounds)")
-	}
+	ll.Append("X")
+	assert.Nil(t, ll.Get(1))
 }
 
-func TestAppendToIndex(t *testing.T) {
-	l := NewList()
-	l.Append("1")
-	l.Append("2")
-	l.Append("4")
-	err := l.AppendToIndex("3", 2)
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
+func TestLinkedList_AppendToIndex(t *testing.T) {
+	ll := NewList()
+	err := ll.AppendToIndex("A", 0)
+	assert.Nil(t, err)
+	err = ll.AppendToIndex("B", 1)
+	assert.Nil(t, err)
+	err = ll.AppendToIndex("C", 1)
+	assert.Nil(t, err)
 
-	if l.Get(2).Val != "3" {
-		t.Errorf("Expected value at index 2 to be '3', got %v", l.Get(2).Val)
-	}
-
-	err = l.AppendToIndex("fail", 99)
-	if err == nil {
-		t.Error("Expected error for index out of bounds")
-	}
+	assert.Equal(t, "A", ll.Get(0).Val)
+	assert.Equal(t, "C", ll.Get(1).Val)
+	assert.Equal(t, "B", ll.Get(2).Val)
 }
 
-func TestRemoveAtIndex(t *testing.T) {
-	l := NewList()
-	l.Append("a")
-	l.Append("b")
-	l.Append("c")
-
-	node, err := l.RemoveAtIndex(1)
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
-	if node.Val != "b" {
-		t.Errorf("Expected to remove 'b', got %v", node.Val)
-	}
-	if l.Len() != 2 {
-		t.Errorf("Expected length 2 after removal, got %d", l.Len())
-	}
-
-	_, err = l.RemoveAtIndex(10)
-	if err == nil {
-		t.Error("Expected error when removing at invalid index")
-	}
+func TestLinkedList_AppendToIndex_OutOfBounds(t *testing.T) {
+	ll := NewList()
+	err := ll.AppendToIndex("A", 2)
+	assert.NotNil(t, err)
 }
 
-func TestLsearch(t *testing.T) {
-	l := NewList()
-	l.Append("apple")
-	l.Append("banana")
-	l.Append("cherry")
+func TestLinkedList_RemoveAtIndex(t *testing.T) {
+	ll := NewList()
+	ll.Append("A")
+	ll.Append("B")
+	ll.Append("C")
 
-	if idx := l.Lsearch("banana"); idx != 1 {
-		t.Errorf("Expected index 1 for 'banana', got %d", idx)
-	}
+	node, err := ll.RemoveAtIndex(1)
+	assert.Nil(t, err)
+	assert.Equal(t, "B", node.Val)
+	assert.Equal(t, 2, ll.Len())
 
-	if idx := l.Lsearch("missing"); idx != -1 {
-		t.Errorf("Expected -1 for 'missing', got %d", idx)
-	}
+	assert.Equal(t, "A", ll.Get(0).Val)
+	assert.Equal(t, "C", ll.Get(1).Val)
 }
 
-func TestClear(t *testing.T) {
-	l := NewList()
-	l.Append("1")
-	l.Append("2")
-	l.Clear()
+func TestLinkedList_RemoveAtIndex_FirstAndLast(t *testing.T) {
+	ll := NewList()
+	ll.Append("A")
+	ll.Append("B")
+	ll.Append("C")
 
-	if l.Len() != 0 || !l.IsEmpty() {
-		t.Error("Clear() did not reset the list properly")
-	}
-	if l.head != nil || l.tail != nil {
-		t.Error("Head or tail should be nil after Clear()")
-	}
+	_, err := ll.RemoveAtIndex(0)
+	assert.Nil(t, err)
+	assert.Equal(t, "B", ll.Get(0).Val)
+
+	_, err = ll.RemoveAtIndex(1)
+	assert.Nil(t, err)
+	assert.Equal(t, "B", ll.Get(0).Val)
+	assert.Nil(t, ll.Get(1))
+}
+
+func TestLinkedList_IsEmpty(t *testing.T) {
+	ll := NewList()
+	assert.True(t, ll.IsEmpty())
+	ll.Append("A")
+	assert.False(t, ll.IsEmpty())
+}
+
+func TestLinkedList_Lsearch(t *testing.T) {
+	ll := NewList()
+	ll.Append("A")
+	ll.Append("B")
+	ll.Append("C")
+
+	assert.Equal(t, 1, ll.Lsearch("B"))
+	assert.Equal(t, -1, ll.Lsearch("X"))
+}
+
+func TestLinkedList_Clear(t *testing.T) {
+	ll := NewList()
+	ll.Append("A")
+	ll.Append("B")
+
+	ll.Clear()
+	assert.True(t, ll.IsEmpty())
+	assert.Nil(t, ll.Get(0))
 }

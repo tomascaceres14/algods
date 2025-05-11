@@ -164,6 +164,22 @@ func (l *LinkedList) Lsearch(val any) int {
 	return -1
 }
 
+func (l *LinkedList) Flat() []any {
+	var list []any = []any{}
+
+	if l.len == 0 {
+		return list
+	}
+
+	current := l.head
+	for i := 0; i < l.len; i++ {
+		list = append(list, current.Val)
+		current = current.next
+	}
+
+	return list
+}
+
 func (l *LinkedList) Clear() {
 	l.head = nil
 	l.tail = nil
