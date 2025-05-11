@@ -7,8 +7,9 @@ import (
 )
 
 type HashTable struct {
-	Table         []*list.LinkedList
-	size, buckets int
+	Table            []*list.LinkedList
+	size, buckets    int
+	minSize, maxSize float64
 }
 
 type item struct {
@@ -22,10 +23,15 @@ func New(cap int) *HashTable {
 		table[i] = list.NewList()
 	}
 
+	minSize := 0.15 * float64(cap)
+	maxSize := 0.65 * float64(cap)
+
 	return &HashTable{
 		Table:   table,
 		size:    0,
 		buckets: cap,
+		minSize: minSize,
+		maxSize: maxSize,
 	}
 }
 
@@ -38,6 +44,7 @@ func (ht *HashTable) Buckets() int {
 }
 
 func (ht *HashTable) Put(key string, value any) {
+
 	index := ht.rollingHash(key)
 
 	list := ht.Table[index]
@@ -92,6 +99,16 @@ func (ht *HashTable) rollingHash(s string) int64 {
 		hash = ((hash<<5 - hash) + int64(s[i])) % m
 	}
 	return hash % int64(ht.buckets)
+}
+
+func (ht *HashTable) resize() {
+	newTable := New(ht.buckets * 2)
+	ht.ForEach(func(i *item) {
+		newTable.Put(i.key, i.value)
+	})
+
+	ht.Table = newTable.Table
+	ht.buckets = newTable.buckets
 }
 
 func (ht *HashTable) ForEach(f func(*item)) {
