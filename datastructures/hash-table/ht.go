@@ -7,8 +7,8 @@ import (
 )
 
 type HashTable struct {
-	Table        []*list.LinkedList
-	size, bucket int
+	Table         []*list.LinkedList
+	size, buckets int
 }
 
 type item struct {
@@ -23,32 +23,18 @@ func New(cap int) *HashTable {
 	}
 
 	return &HashTable{
-		Table:  table,
-		size:   0,
-		bucket: cap,
+		Table:   table,
+		size:    0,
+		buckets: cap,
 	}
 }
 
-func findItemByKey(list *list.LinkedList, key string) (*item, bool) {
-	for i := 0; i < list.Len(); i++ {
-		node := list.Get(i)
-		item, ok := node.Val.(*item)
-		if ok && item.key == key {
-			return item, true
-		}
-	}
-
-	return nil, false
+func (ht *HashTable) Size() int {
+	return ht.size
 }
 
-func (ht *HashTable) rollingHash(s string) int64 {
-	const m int64 = 1_000_000_009
-
-	var hash int64 = 0
-	for i := 0; i < len(s); i++ {
-		hash = ((hash<<5 - hash) + int64(s[i])) % m
-	}
-	return hash % int64(ht.bucket)
+func (ht *HashTable) Buckets() int {
+	return ht.buckets
 }
 
 func (ht *HashTable) Put(key string, value any) {
@@ -86,11 +72,43 @@ func (ht *HashTable) Get(key string) any {
 	return item.value
 }
 
+func findItemByKey(list *list.LinkedList, key string) (*item, bool) {
+	for i := 0; i < list.Len(); i++ {
+		node := list.Get(i)
+		item, ok := node.Val.(*item)
+		if ok && item.key == key {
+			return item, true
+		}
+	}
+
+	return nil, false
+}
+
+func (ht *HashTable) rollingHash(s string) int64 {
+	const m int64 = 1_000_000_009
+
+	var hash int64 = 0
+	for i := 0; i < len(s); i++ {
+		hash = ((hash<<5 - hash) + int64(s[i])) % m
+	}
+	return hash % int64(ht.buckets)
+}
+
+func (ht *HashTable) ForEach(f func(*item)) {
+	for _, bucket := range ht.Table {
+		if !bucket.IsEmpty() {
+			bucket.ForEach(func(node *list.Node) {
+				f(node.Val.(*item))
+			})
+		}
+	}
+}
+
 func (ht *HashTable) String() string {
 	var result string = ""
 
 	result += fmt.Sprintf("Table: %v\n", ht.Table)
-	result += fmt.Sprintf("Bucket capacity: %v\n", ht.bucket)
+	result += fmt.Sprintf("Buckets: %v\n", ht.buckets)
 	result += fmt.Sprintf("Size: %v\n", ht.size)
 
 	return result

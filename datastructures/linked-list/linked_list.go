@@ -196,3 +196,9 @@ func (l *LinkedList) String() string {
 	result += "nil"
 	return result
 }
+
+func (l *LinkedList) ForEach(f func(node *Node)) {
+	for node := l.head; node != nil; node = node.next {
+		f(node)
+	}
+}

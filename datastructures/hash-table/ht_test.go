@@ -6,6 +6,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFail(t *testing.T) {
+	table := New(2)
+
+	table.Put("uno", "1")
+	table.Put("dos", "2")
+	table.Put("tres", "3")
+}
+
 func TestPutAndGetBasic(t *testing.T) {
 	table := New(4)
 
