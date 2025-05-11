@@ -190,7 +190,7 @@ func (l *LinkedList) String() string {
 	result := ""
 	current := l.head
 	for current != nil {
-		result += fmt.Sprintf("%v <-> ", current.Val)
+		result += fmt.Sprintf("%v<->", current.Val)
 		current = current.next
 	}
 	result += "nil"

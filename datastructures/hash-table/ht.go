@@ -1,6 +1,8 @@
 package ht
 
 import (
+	"fmt"
+
 	list "github.com/tomascaceres14/algods/datastructures/linked-list"
 )
 
@@ -82,4 +84,18 @@ func (ht *HashTable) Get(key string) any {
 	}
 
 	return item.value
+}
+
+func (ht *HashTable) String() string {
+	var result string = ""
+
+	result += fmt.Sprintf("Table: %v\n", ht.Table)
+	result += fmt.Sprintf("Bucket capacity: %v\n", ht.bucket)
+	result += fmt.Sprintf("Size: %v\n", ht.size)
+
+	return result
+}
+
+func (it *item) String() string {
+	return fmt.Sprintf("{key=%s, val=%v}", it.key, it.value)
 }
