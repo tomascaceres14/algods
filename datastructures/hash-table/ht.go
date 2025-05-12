@@ -23,7 +23,7 @@ func New(cap int) *HashTable {
 		table[i] = list.NewList()
 	}
 
-	minSize := 0.15 * float64(cap)
+	minSize := 0.25 * float64(cap)
 	maxSize := 0.65 * float64(cap)
 
 	return &HashTable{
@@ -45,7 +45,7 @@ func (ht *HashTable) Buckets() int {
 
 func (ht *HashTable) Put(key string, value any) {
 	if ht.size >= int(ht.maxSize) {
-		ht.resize()
+		ht.expand()
 	}
 
 	index := ht.rollingHash(key)
@@ -81,6 +81,10 @@ func (ht *HashTable) Get(key string) any {
 }
 
 func (ht *HashTable) Delete(key string) {
+	if ht.size <= int(ht.minSize) {
+		ht.shrink()
+	}
+
 	index := ht.rollingHash(key)
 	bucket := ht.Table[index]
 
@@ -114,8 +118,20 @@ func (ht *HashTable) rollingHash(s string) int64 {
 	return hash % int64(ht.buckets)
 }
 
-func (ht *HashTable) resize() {
+func (ht *HashTable) expand() {
 	newTable := New(ht.buckets * 2)
+	ht.ForEach(func(i *item) {
+		newTable.Put(i.key, i.value)
+	})
+
+	ht.Table = newTable.Table
+	ht.buckets = newTable.buckets
+	ht.maxSize = newTable.maxSize
+	ht.minSize = newTable.minSize
+}
+
+func (ht *HashTable) shrink() {
+	newTable := New(int(ht.buckets / 2))
 	ht.ForEach(func(i *item) {
 		newTable.Put(i.key, i.value)
 	})
