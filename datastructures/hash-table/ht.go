@@ -44,21 +44,22 @@ func (ht *HashTable) Buckets() int {
 }
 
 func (ht *HashTable) Put(key string, value any) {
+	if ht.size >= int(ht.maxSize) {
+		ht.resize()
+	}
 
 	index := ht.rollingHash(key)
-
 	list := ht.Table[index]
 
-	exists, ok := findItemByKey(list, key)
-	if !ok {
+	if exists, ok := findItemByKey(list, key); !ok {
 		list.Append(&item{
 			key:   key,
 			value: value,
 		})
-		return
+	} else {
+		exists.value = value
 	}
 
-	exists.value = value
 	ht.size++
 }
 
@@ -79,16 +80,28 @@ func (ht *HashTable) Get(key string) any {
 	return item.value
 }
 
-func findItemByKey(list *list.LinkedList, key string) (*item, bool) {
-	for i := 0; i < list.Len(); i++ {
-		node := list.Get(i)
-		item, ok := node.Val.(*item)
-		if ok && item.key == key {
-			return item, true
-		}
+func (ht *HashTable) Delete(key string) {
+	index := ht.rollingHash(key)
+	bucket := ht.Table[index]
+
+	if bucket.Len() == 0 {
+		return
 	}
 
-	return nil, false
+	if bucket.Len() == 1 {
+		bucket.RemoveAt(0)
+		ht.size--
+		return
+	}
+
+	bucket.ForEach(func(index int, node *list.Node) {
+		item := node.Val.(*item)
+		if item.key == key {
+			bucket.RemoveAt(index)
+			ht.size--
+			return
+		}
+	})
 }
 
 func (ht *HashTable) rollingHash(s string) int64 {
@@ -109,12 +122,14 @@ func (ht *HashTable) resize() {
 
 	ht.Table = newTable.Table
 	ht.buckets = newTable.buckets
+	ht.maxSize = newTable.maxSize
+	ht.minSize = newTable.minSize
 }
 
 func (ht *HashTable) ForEach(f func(*item)) {
 	for _, bucket := range ht.Table {
 		if !bucket.IsEmpty() {
-			bucket.ForEach(func(node *list.Node) {
+			bucket.ForEach(func(index int, node *list.Node) {
 				f(node.Val.(*item))
 			})
 		}
@@ -133,4 +148,16 @@ func (ht *HashTable) String() string {
 
 func (it *item) String() string {
 	return fmt.Sprintf("{key=%s, val=%v}", it.key, it.value)
+}
+
+func findItemByKey(list *list.LinkedList, key string) (*item, bool) {
+	for i := 0; i < list.Len(); i++ {
+		node := list.Get(i)
+		item, ok := node.Val.(*item)
+		if ok && item.key == key {
+			return item, true
+		}
+	}
+
+	return nil, false
 }

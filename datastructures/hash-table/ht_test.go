@@ -1,17 +1,27 @@
 package ht
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFail(t *testing.T) {
-	table := New(2)
+func TestQuick(t *testing.T) {
+	table := New(4)
 
 	table.Put("uno", "1")
 	table.Put("dos", "2")
-	table.Put("tres", "3")
+	table.Put("otro", "mas")
+	table.Put("atra", "atramas")
+
+	assert.Equal(t, 8, table.Buckets())
+
+	fmt.Println(table.Table)
+	table.Delete("atra")
+	fmt.Println(table.Table)
+	assert.Equal(t, 3, table.Size())
+	assert.Equal(t, nil, table.Get("atra"))
 }
 
 func TestPutAndGetBasic(t *testing.T) {
