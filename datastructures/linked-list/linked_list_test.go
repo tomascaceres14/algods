@@ -28,13 +28,13 @@ func TestLinkedList_Get_OutOfBounds(t *testing.T) {
 	assert.Nil(t, ll.Get(1))
 }
 
-func TestLinkedList_AppendTo(t *testing.T) {
+func TestLinkedList_InsertAt(t *testing.T) {
 	ll := NewList()
-	err := ll.AppendTo("A", 0)
+	err := ll.InsertAt("A", 0)
 	assert.Nil(t, err)
-	err = ll.AppendTo("B", 1)
+	err = ll.InsertAt("B", 1)
 	assert.Nil(t, err)
-	err = ll.AppendTo("C", 1)
+	err = ll.InsertAt("C", 1)
 	assert.Nil(t, err)
 
 	assert.Equal(t, "A", ll.Get(0).Val)
@@ -42,9 +42,9 @@ func TestLinkedList_AppendTo(t *testing.T) {
 	assert.Equal(t, "B", ll.Get(2).Val)
 }
 
-func TestLinkedList_AppendTo_OutOfBounds(t *testing.T) {
+func TestLinkedList_InsertAt_OutOfBounds(t *testing.T) {
 	ll := NewList()
-	err := ll.AppendTo("A", 2)
+	err := ll.InsertAt("A", 2)
 	assert.NotNil(t, err)
 }
 

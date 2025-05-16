@@ -63,7 +63,7 @@ func (l *LinkedList) Append(val any) {
 	l.len++
 }
 
-func (l *LinkedList) AppendTo(val any, index int) error {
+func (l *LinkedList) InsertAt(val any, index int) error {
 	if index > l.len {
 		return errors.New("Index out of bounds.")
 	}
