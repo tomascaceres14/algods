@@ -1,6 +1,9 @@
 package mtx
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 //
 // func (m *Matrix) Clone() *Matrix
@@ -119,4 +122,20 @@ func (m *Matrix) AddHeaders(headers []string) error {
 	m.Elements[0] = newHeaders
 
 	return nil
+}
+
+func (m *Matrix) String() string {
+	result := ""
+
+	mtx := m.Elements
+	for i := range m.rows {
+		row := ""
+		for j := range m.rows {
+			row += fmt.Sprintf("|%v|", mtx[i][j])
+		}
+		row += "\n"
+		result += row
+	}
+
+	return result
 }

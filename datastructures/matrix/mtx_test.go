@@ -1,6 +1,7 @@
 package mtx
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,6 +22,8 @@ func TestBasicOps(t *testing.T) {
 
 	testMtx := make([][]any, 3)
 	testMtx[0], testMtx[1], testMtx[2] = row1, row2, row3
+
+	fmt.Println(mtx)
 
 	assert.Equal(t, testMtx, mtx.Elements)
 
