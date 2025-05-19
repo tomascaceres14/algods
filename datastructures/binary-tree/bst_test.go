@@ -1,6 +1,7 @@
 package bst
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -18,6 +19,17 @@ func equalSlices(arr1 []int, arr2 []int) bool {
 	return true
 }
 
+func TestQuickly(t *testing.T) {
+	tree := NewBTree()
+
+	nums := []int{1, 4, 6, 9, 11, 15, 20, 21, 26, 30}
+
+	for _, v := range nums {
+		tree.Insert(v)
+	}
+
+	fmt.Println(tree)
+}
 func TestInsertNode(t *testing.T) {
 	tree := NewBTree()
 

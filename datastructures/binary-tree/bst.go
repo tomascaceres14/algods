@@ -3,6 +3,7 @@ package bst
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 )
 
@@ -79,7 +80,6 @@ func (t *BTree) Insert(val int) error {
 	}
 }
 
-
 func (t *BTree) InsertMany(many ...int) error {
 	for _, v := range many {
 		if err := t.Insert(v); err != nil {
@@ -109,6 +109,20 @@ func (t *BTree) InOrder() []int {
 	return result
 }
 
+func (t *BTree) Balance() {
+	inorder := t.InOrder()
+
+	bst := NewBTree()
+
+	for range inorder {
+		mid := len(inorder) / 2
+		bst.Insert(inorder[mid])
+		inorder = slices.Delete(inorder, mid, mid+1)
+	}
+
+	t.root = bst.root
+}
+
 func inOrderHelper(n *Node, result *[]int) {
 	if n == nil {
 		return
@@ -118,7 +132,7 @@ func inOrderHelper(n *Node, result *[]int) {
 	inOrderHelper(n.right, result)
 }
 
-func stringify(n *Node, level int) {
+func stringify(n *Node, level int) string {
 	if n != nil {
 		format := ""
 		for i := 0; i < level; i++ {
@@ -129,9 +143,13 @@ func stringify(n *Node, level int) {
 		stringify(n.right, level)
 		fmt.Printf(format+"%d\n", n.Val)
 		stringify(n.left, level)
+
+		return format
+	} else {
+		return ""
 	}
 }
 
-func (bst *BTree) String() {
-	stringify(bst.root, 0)
+func (bst *BTree) String() string {
+	return stringify(bst.root, 0)
 }
