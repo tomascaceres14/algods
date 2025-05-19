@@ -35,10 +35,14 @@ func (g *Graph[T]) AddEdge(from, to T) {
 	g.AddVertex(from)
 	g.AddVertex(to)
 
-	g.edges[from] = append(g.edges[from], to)
+	if !slices.Contains(g.edges[from], to) {
+		g.edges[from] = append(g.edges[from], to)
+	}
 
 	if !g.directed {
-		g.edges[to] = append(g.edges[to], from)
+		if !slices.Contains(g.edges[to], from) {
+			g.edges[to] = append(g.edges[to], from)
+		}
 	}
 }
 
