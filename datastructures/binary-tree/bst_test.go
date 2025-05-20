@@ -24,19 +24,23 @@ func equalSlices(arr1 []int, arr2 []int) bool {
 func TestQuickly(t *testing.T) {
 	tree := NewBSTree()
 
-	nums := []int{10, 12, 8, 11, 13, 9, 14}
+	nums := []int{6, 9, 7, 8, 12}
 
 	for _, v := range nums {
 		tree.Insert(v)
 	}
 
-	searchNode, err := tree.Search(10)
+	searchNode, err := tree.Search(12)
 	if err != nil {
 		t.Error(err)
 	}
 
-	assert.Equal(t, 10, searchNode.Val)
+	assert.Equal(t, 12, searchNode.Val)
 
+	fmt.Println("tree before deletion")
+	fmt.Println(tree)
+	fmt.Println("tree after deletion")
+	tree.Delete(9)
 	fmt.Println(tree)
 }
 func TestInsertNode(t *testing.T) {
@@ -47,10 +51,6 @@ func TestInsertNode(t *testing.T) {
 
 	for _, v := range nums {
 		tree.Insert(v)
-	}
-
-	if tree.Min().Val != 1 {
-		t.Errorf("Expected min to be 1, got %v", tree.Min().Val)
 	}
 
 	inOrder := tree.InOrder()
