@@ -3,6 +3,8 @@ package bst
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func equalSlices(arr1 []int, arr2 []int) bool {
@@ -20,18 +22,25 @@ func equalSlices(arr1 []int, arr2 []int) bool {
 }
 
 func TestQuickly(t *testing.T) {
-	tree := NewBTree()
+	tree := NewBSTree()
 
-	nums := []int{1, 4, 6, 9, 11, 15, 20, 21, 26, 30}
+	nums := []int{10, 12, 8, 11, 13, 9, 14}
 
 	for _, v := range nums {
 		tree.Insert(v)
 	}
 
+	searchNode, err := tree.Search(10)
+	if err != nil {
+		t.Error(err)
+	}
+
+	assert.Equal(t, 10, searchNode.Val)
+
 	fmt.Println(tree)
 }
 func TestInsertNode(t *testing.T) {
-	tree := NewBTree()
+	tree := NewBSTree()
 
 	nums := []int{5, 1, 3, 6, 8, 2, 10, 4, 1}
 	sortedNums := []int{1, 2, 3, 4, 5, 6, 8, 10}

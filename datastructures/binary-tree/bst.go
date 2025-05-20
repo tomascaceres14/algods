@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type BTree struct {
+type BSTree struct {
 	root *Node
 	size int
 }
@@ -23,15 +23,15 @@ func NewNode(val int) *Node {
 	}
 }
 
-func NewBTree() *BTree {
-	return &BTree{
+func NewBSTree() *BSTree {
+	return &BSTree{
 		size: 0,
 	}
 }
 
-func NewBTreeFromArray(array []int) *BTree {
+func NewBSTreeFromArray(array []int) *BSTree {
 
-	bst := &BTree{}
+	bst := &BSTree{}
 
 	for _, v := range array {
 		bst.Insert(v)
@@ -40,11 +40,11 @@ func NewBTreeFromArray(array []int) *BTree {
 	return bst
 }
 
-func (t *BTree) Len() int {
+func (t *BSTree) Len() int {
 	return t.size
 }
 
-func (t *BTree) Insert(val int) error {
+func (t *BSTree) Insert(val int) error {
 	node := NewNode(val)
 
 	if t.root == nil {
@@ -80,17 +80,26 @@ func (t *BTree) Insert(val int) error {
 	}
 }
 
-func (t *BTree) InsertMany(many ...int) error {
-	for _, v := range many {
-		if err := t.Insert(v); err != nil {
-			return err
+func (t *BSTree) Search(val int) (*Node, error) {
+	current := t.root
+
+	for current != nil {
+		if current.Val == val {
+			return current, nil
 		}
+
+		if val < current.Val {
+			current = current.left
+			continue
+		}
+
+		current = current.right
 	}
 
-	return nil
+	return nil, errors.New("Node not found")
 }
 
-func (t *BTree) Min() *Node {
+func (t *BSTree) Min() *Node {
 	if t.root == nil {
 		return &Node{}
 	}
@@ -103,16 +112,16 @@ func (t *BTree) Min() *Node {
 	return current
 }
 
-func (t *BTree) InOrder() []int {
+func (t *BSTree) InOrder() []int {
 	var result []int
 	inOrderHelper(t.root, &result)
 	return result
 }
 
-func (t *BTree) Balance() {
+func (t *BSTree) Balance() {
 	inorder := t.InOrder()
 
-	bst := NewBTree()
+	bst := NewBSTree()
 
 	for range inorder {
 		mid := len(inorder) / 2
@@ -150,6 +159,6 @@ func stringify(n *Node, level int) string {
 	}
 }
 
-func (bst *BTree) String() string {
+func (bst *BSTree) String() string {
 	return stringify(bst.root, 0)
 }

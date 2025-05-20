@@ -69,6 +69,10 @@ func (g *Graph[T]) RemoveEdge(from, to T) {
 	}
 }
 
+func (g *Graph[T]) GetNeighbours(vertex T) []T {
+	return g.edges[vertex]
+}
+
 func (g *Graph[T]) String() string {
 	result := ""
 	for node, neighbours := range g.edges {
