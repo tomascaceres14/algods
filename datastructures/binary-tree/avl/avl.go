@@ -81,6 +81,28 @@ func delete[T constraints.Ordered](val T, node *Node[T]) *Node[T] {
 	return applyRotation(node)
 }
 
+func (t *AVLTree[T]) Exists(val T) bool {
+	if t.root == nil {
+		return false
+	}
+
+	return exists(val, t.root)
+}
+
+func exists[T constraints.Ordered](val T, node *Node[T]) bool {
+	if node == nil {
+		return false
+	}
+
+	if val < node.Val {
+		return exists(val, node.left)
+	} else if val > node.Val {
+		return exists(val, node.right)
+	}
+
+	return true
+}
+
 func applyRotation[T constraints.Ordered](node *Node[T]) *Node[T] {
 	balance := getBalance(node)
 
