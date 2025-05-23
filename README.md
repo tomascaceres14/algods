@@ -11,7 +11,7 @@
 - [x] Hash Tables
 - [x] Matrices
 - [x] Binary Tree
-- [ ] Red-Black Tree
+- [x] AVL Tree
 - [x] Graphs
 
 ## Algorithms
