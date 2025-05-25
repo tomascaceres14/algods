@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/tomascaceres14/algods/datastructures/queue"
 	"golang.org/x/exp/constraints"
 )
 
@@ -101,6 +102,75 @@ func exists[T constraints.Ordered](val T, node *Node[T]) bool {
 	}
 
 	return true
+}
+
+func (t *AVLTree[T]) InOrder() {
+	inOrder(t.root)
+	fmt.Println("")
+}
+
+func inOrder[T constraints.Ordered](node *Node[T]) {
+	if node == nil {
+		return
+	}
+
+	inOrder(node.left)
+	fmt.Printf("%v ", node.Val)
+	inOrder(node.right)
+}
+
+func (t *AVLTree[T]) PreOrder() {
+	preOrder(t.root)
+	fmt.Println("")
+}
+
+func preOrder[T constraints.Ordered](node *Node[T]) {
+	if node == nil {
+		return
+	}
+
+	fmt.Printf("%v ", node.Val)
+	preOrder(node.left)
+	preOrder(node.right)
+}
+
+func (t *AVLTree[T]) PostOrder() {
+	postOrder(t.root)
+	fmt.Println("")
+}
+
+func postOrder[T constraints.Ordered](node *Node[T]) {
+	if node == nil {
+		return
+	}
+
+	postOrder(node.left)
+	postOrder(node.right)
+	fmt.Printf("%v ", node.Val)
+}
+
+func (t *AVLTree[T]) LevelOrder() {
+	queue := queue.New()
+	level := 1
+	queue.Push(t.root)
+	fmt.Printf("%v\n", t.root.Val)
+
+	for !queue.IsEmpty() {
+		curr, _ := queue.Shift()
+		node := curr.(*Node[T])
+
+		if node.left != nil {
+			fmt.Printf("\n%v - ", node.left.Val)
+			queue.Push(node.left)
+		}
+
+		if node.right != nil {
+			fmt.Printf("%v\n", node.right.Val)
+			queue.Push(node.right)
+		}
+
+		level++
+	}
 }
 
 func applyRotation[T constraints.Ordered](node *Node[T]) *Node[T] {
